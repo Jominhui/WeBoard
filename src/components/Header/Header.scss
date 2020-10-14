@@ -1,0 +1,25 @@
+/* your css code */
+.Header{
+    width: 100%;
+    min-width: 1600px;
+    height: 80px;
+    box-shadow: 5px 5px 10px 1px #e2e2e2;
+
+    &-Logo{
+        width: 200px;
+        height: 100%;
+        float: left;
+        background-color: #e2e2e2;
+    }
+
+    &-Title{
+        width: auto;
+        height: 100%;
+        margin-left: 50px;
+        float: left;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 25px;
+    }
+}
