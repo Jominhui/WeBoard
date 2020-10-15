@@ -41,7 +41,7 @@ const Draw = ({}) => {
     const context = canvas.getContext('2d')
 
     stroke(context)
-  }, [draw])
+  }, [stroke])
 
   return (
     <>
