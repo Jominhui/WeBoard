@@ -2,6 +2,8 @@ import React, { useRef, useEffect } from "react";
 import PropTypes from "prop-types";
 import "./Draw.scss";
 
+let isDrawing = false;
+
 const Draw = ({}) => {
   const canvasRef = useRef(null)
   
@@ -10,7 +12,7 @@ const Draw = ({}) => {
     
     const down = (e) =>{
       // if ( currJob != "stroke" ) return;
-      // isDrawing = true;
+      isDrawing = true;
       ctx.beginPath();
       ctx.lineWidth = 2;
       ctx.moveTo(e.offsetX, e.offsetY);
@@ -18,7 +20,7 @@ const Draw = ({}) => {
 
     const move = (e) =>{
       // if ( currJob != "stroke" ) return;
-      // if(!isDrawing) return;
+      if(!isDrawing) return;
       ctx.lineTo(e.offsetX, e.offsetY);
       ctx.strokeStyle = "black";
       ctx.stroke();
@@ -26,7 +28,7 @@ const Draw = ({}) => {
 
     const draw_stroke = () => {
       // if ( currJob != "stroke" ) return;
-      // isDrawing = false;
+      isDrawing = false;
     }
 
     canvas[0].addEventListener('mousedown', down, true);
