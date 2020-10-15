@@ -6,14 +6,16 @@ import { Link } from "react-router-dom";
 const Title = ({}) => {
   return (
     <>
-      <div>
-        <p>환영합니다.</p>
-        <input />
-        <div>
-          <Link to="/Draw">
-            <button>다음</button>
-          </Link>
-        </div>
+      <div className="Title">
+        <p className="Title-coment">환영합니다!</p>
+        <p className="Title-coment">당신의 그림을 WEBOARD 그려주세요.</p>
+        <input className="Title-box" />
+        
+        <Link to="/Draw">
+          <div className="Title-btn">
+              다음
+          </div>
+        </Link>
       </div>
     </>
   );
