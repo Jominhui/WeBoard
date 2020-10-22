@@ -1,58 +1,122 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState, useCallback } from "react";
 import PropTypes from "prop-types";
 import "./Draw.scss";
-
-let isDrawing = false;
 
 const Draw = ({}) => {
   const canvasRef = useRef(null)
   
-  const stroke = (ctx) => {
-    const canvas = document.getElementsByClassName("Canvas-Drawing");
+  const [tool, setTool] = useState("stroke");
+  const [isDrawing, setisDrawing] = useState(false);
+
+  const [startPath, setStartPath] = useState([]);
+  const [endPath, setEndPath] = useState([]);
+
+  const strokeDown = useCallback((e, ctx) => {
+    ctx.beginPath();
+    ctx.lineWidth = 2;
+    ctx.moveTo(e.offsetX, e.offsetY);
+  }, [])
+
+  const squareDown = useCallback((e, ctx) => {
+    ctx.beginPath();
+    setStartPath([e.offsetX, e.offsetY]);
+    setEndPath([e.offsetX, e.offsetY]);
+  }, [])
+
+  const strokeMove = useCallback((e, ctx) => {
+    ctx.lineTo(e.offsetX, e.offsetY);
+    ctx.strokeStyle = "black";
+    ctx.stroke();
+  }, [])
+
+  const squareMove = useCallback((e) => {
+    setEndPath([e.offsetX, e.offsetY]);
+  }, [])
+
+  const drawSquare = useCallback((e, ctx) => {
+    console.log("up")
+    console.log(startPath, endPath)
+    const sx = startPath[0];
+    const sy = startPath[1];
+    const ex = endPath[0];
+    const ey = endPath[1];
+
+    console.log(sx, sy, ex-sx, ey-sy)
     
-    const down = (e) =>{
-      // if ( currJob != "stroke" ) return;
-      isDrawing = true;
-      ctx.beginPath();
-      ctx.lineWidth = 2;
-      ctx.moveTo(e.offsetX, e.offsetY);
-    }
+    ctx.rect(sx, sy, ex-sx, ey-sy);
+    ctx.fillStyle = "black";
+    ctx.fill();
+  }, [startPath, endPath])
 
-    const move = (e) =>{
-      // if ( currJob != "stroke" ) return;
-      if(!isDrawing) return;
-      ctx.lineTo(e.offsetX, e.offsetY);
-      ctx.strokeStyle = "black";
-      ctx.stroke();
-    }
+  const down = useCallback((e) =>{
+    const ctx = canvasRef.current.getContext('2d')
 
-    const draw_stroke = () => {
-      // if ( currJob != "stroke" ) return;
-      isDrawing = false;
+    setisDrawing(true);
+    switch(tool) {
+      case "stroke":
+        strokeDown(e, ctx);
+        break;
+      case "square":
+        squareDown(e, ctx);
+        break;
     }
+  }, [tool, strokeDown, squareDown])
+
+  const move = useCallback((e) =>{
+    if(!isDrawing) return;
+
+    const ctx = canvasRef.current.getContext('2d')
+
+    switch(tool) {
+      case "stroke":
+        strokeMove(e, ctx);
+        break;
+      case "square":
+        squareMove(e, ctx);
+        break;
+    }
+  }, [tool, isDrawing, strokeMove, squareMove])
+
+
+  const draw = useCallback((e) => {
+    const ctx = canvasRef.current.getContext('2d')
+
+    switch(tool) {
+      case "stroke":
+        break;
+      case "square":
+        drawSquare(e, ctx);
+        break;
+    }
+    setisDrawing(false);
+  }, [tool, drawSquare]);
+  
+  useEffect(() => {
+    const canvas = document.getElementsByClassName("Canvas-Drawing");
 
     canvas[0].addEventListener('mousedown', down, true);
     canvas[0].addEventListener('mousemove', move, true);
-    canvas[0].addEventListener('mouseup', draw_stroke, true);
-    canvas[0].addEventListener('mouseout', draw_stroke, true);
-  }
-  
-  useEffect(() => {
-    
-    const canvas = canvasRef.current
-    const context = canvas.getContext('2d')
+    canvas[0].addEventListener('mouseup', draw, true);
+    canvas[0].addEventListener('mouseout', draw, true);
 
-    stroke(context)
-  }, [stroke])
+    return(() => {
+      const canvas = document.getElementsByClassName("Canvas-Drawing");
+
+      canvas[0].removeEventListener('mousedown', down, true);
+      canvas[0].removeEventListener('mousemove', move, true);
+      canvas[0].removeEventListener('mouseup', draw, true);
+      canvas[0].removeEventListener('mouseout', draw, true);
+    })
+  }, [isDrawing, tool, draw])
 
   return (
     <>
       <div className="Draw-area">
         <div className="Tools">
           <div className="Tools-Title">Tools</div>
-          <div className="Tools-menu">선</div>
+          <div className="Tools-menu" onClick={() => setTool("stroke")}>선</div>
           <div className="Tools-menu">지우개</div>
-          <div className="Tools-menu">사각형</div>
+          <div className="Tools-menu" onClick={() => setTool("square")}>사각형</div>
           <div className="Tools-menu">삼각형</div>
           <div className="Tools-menu">원</div>
           <div className="Tools-menu">이미지</div>
