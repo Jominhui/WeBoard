@@ -11,21 +11,10 @@ const Draw = ({}) => {
   const [startPath, setStartPath] = useState([]);
   const [endPath, setEndPath] = useState([]);
 
+  //stroke
   const strokeDown = useCallback((e, ctx) => {
     ctx.beginPath();
     ctx.lineWidth = 2;
-    ctx.moveTo(e.offsetX, e.offsetY);
-  }, [])
-
-  const squareDown = useCallback((e, ctx) => {
-    ctx.beginPath();
-    setStartPath([e.offsetX, e.offsetY]);
-    setEndPath([e.offsetX, e.offsetY]);
-  }, [])
-
-  const eraserDown = useCallback((e, ctx) => {
-    ctx.beginPath();
-    ctx.lineWidth = 10;
     ctx.moveTo(e.offsetX, e.offsetY);
   }, [])
 
@@ -35,10 +24,24 @@ const Draw = ({}) => {
     ctx.stroke();
   }, [])
 
+  //eraser
+  const eraserDown = useCallback((e, ctx) => {
+    ctx.beginPath();
+    ctx.lineWidth = 10;
+    ctx.moveTo(e.offsetX, e.offsetY);
+  }, [])
+
   const eraserMove = useCallback((e, ctx) => {
     ctx.lineTo(e.offsetX, e.offsetY);
     ctx.strokeStyle = "white";
     ctx.stroke();
+  }, [])
+
+  //square
+  const squareDown = useCallback((e, ctx) => {
+    ctx.beginPath();
+    setStartPath([e.offsetX, e.offsetY]);
+    setEndPath([e.offsetX, e.offsetY]);
   }, [])
 
   const squareMove = useCallback((e) => {
@@ -46,8 +49,28 @@ const Draw = ({}) => {
   }, [])
 
   const drawSquare = useCallback((e, ctx) => {
-    console.log("up")
-    console.log(startPath, endPath)
+    const sx = startPath[0];
+    const sy = startPath[1];
+    const ex = endPath[0];
+    const ey = endPath[1];
+    
+    ctx.rect(sx, sy, ex-sx, ey-sy);
+    ctx.fillStyle = "black";
+    ctx.fill();
+  }, [startPath, endPath])
+
+  //triangle
+  const triangleDown = useCallback((e, ctx) => {
+    ctx.beginPath();
+    setStartPath([e.offsetX, e.offsetY]);
+    setEndPath([e.offsetX, e.offsetY]);
+  }, [])
+
+  const triangleMove = useCallback((e) => {
+    setEndPath([e.offsetX, e.offsetY]);
+  }, [])
+
+  const drawTriangle = useCallback((e, ctx) => {
     const sx = startPath[0];
     const sy = startPath[1];
     const ex = endPath[0];
@@ -55,7 +78,10 @@ const Draw = ({}) => {
 
     console.log(sx, sy, ex-sx, ey-sy)
     
-    ctx.rect(sx, sy, ex-sx, ey-sy);
+    ctx.moveTo((ex + sx)/2, sy);
+    ctx.lineTo(sx, ey);
+    ctx.lineTo(ex, ey);
+    ctx.lineTo((ex + sx)/2, sy);
     ctx.fillStyle = "black";
     ctx.fill();
   }, [startPath, endPath])
@@ -73,6 +99,9 @@ const Draw = ({}) => {
         break;    
       case "square":
         squareDown(e, ctx);
+        break;
+      case "triangle":
+        triangleDown(e, ctx);
         break;
     }
   }, [tool, strokeDown, squareDown])
@@ -92,6 +121,9 @@ const Draw = ({}) => {
       case "square":
         squareMove(e, ctx);
         break;
+      case "triangle":
+        triangleMove(e, ctx);
+        break;
     }
   }, [tool, isDrawing, strokeMove, squareMove])
 
@@ -106,6 +138,9 @@ const Draw = ({}) => {
         break;
       case "square":
         drawSquare(e, ctx);
+        break;
+      case "triangle":
+        drawTriangle(e, ctx);
         break;
     }
     setisDrawing(false);
@@ -137,9 +172,9 @@ const Draw = ({}) => {
           <div className="Tools-menu" onClick={() => setTool("stroke")}>선</div>
           <div className="Tools-menu" onClick={() => setTool("eraser")}>지우개</div>
           <div className="Tools-menu" onClick={() => setTool("square")}>사각형</div>
-          <div className="Tools-menu" onClick={() => setTool("eraser")}>삼각형</div>
-          <div className="Tools-menu">원</div>
-          <div className="Tools-menu">이미지</div>
+          <div className="Tools-menu" onClick={() => setTool("triangle")}>삼각형</div>
+          <div className="Tools-menu" onClick={() => setTool("circle")}>원</div>
+          <div className="Tools-menu" onClick={() => setTool("image")}>이미지</div>
           <div className="Tools-menu">저장</div>
         </div>
 
