@@ -6,7 +6,7 @@ const Header = ({}) => {
   return (
     <>
       <div className="Header">
-        <div className="Header-Logo"></div>
+        <div className="Header-Logo">WEBOARD</div>
         <div className="Header-Title">test</div>
       </div>
     </>
