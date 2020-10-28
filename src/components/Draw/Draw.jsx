@@ -7,6 +7,7 @@ const Draw = ({}) => {
   
   const [tool, setTool] = useState("stroke");
   const [isDrawing, setisDrawing] = useState(false);
+  const [color, setColor] = useState("black");
 
   const [startPath, setStartPath] = useState([]);
   const [endPath, setEndPath] = useState([]);
@@ -20,9 +21,9 @@ const Draw = ({}) => {
 
   const strokeMove = useCallback((e, ctx) => {
     ctx.lineTo(e.offsetX, e.offsetY);
-    ctx.strokeStyle = "black";
+    ctx.strokeStyle = color;
     ctx.stroke();
-  }, [])
+  }, [color])
 
   //eraser
   const eraserDown = useCallback((e, ctx) => {
@@ -55,9 +56,9 @@ const Draw = ({}) => {
     const ey = endPath[1];
     
     ctx.rect(sx, sy, ex-sx, ey-sy);
-    ctx.strokeStyle = "black";
+    ctx.strokeStyle = color;
     ctx.stroke();
-  }, [startPath, endPath])
+  }, [startPath, endPath, color])
 
   //triangle
   const triangleDown = useCallback((e, ctx) => {
@@ -80,9 +81,9 @@ const Draw = ({}) => {
     ctx.lineTo(sx, ey);
     ctx.lineTo(ex, ey);
     ctx.lineTo((ex + sx)/2, sy);
-    ctx.strokeStyle = "black";
+    ctx.strokeStyle = color;
     ctx.stroke();
-  }, [startPath, endPath])
+  }, [startPath, endPath, color])
 
   //circle
   const circleDown = useCallback((e, ctx) => {
@@ -101,9 +102,9 @@ const Draw = ({}) => {
     const ex = endPath[0];
 
     ctx.arc(sx, sy, Math.abs(ex-sx), 0, 2 * Math.PI);
-    ctx.strokeStyle = "black";
+    ctx.strokeStyle = color;
     ctx.stroke();
-  }, [startPath, endPath])
+  }, [startPath, endPath, color])
 
   const down = useCallback((e) =>{
     const ctx = canvasRef.current.getContext('2d')
@@ -203,6 +204,11 @@ const Draw = ({}) => {
           <div className="Tools-menu" onClick={() => setTool("triangle")}>삼각형</div>
           <div className="Tools-menu" onClick={() => setTool("circle")}>원</div>
           <div className="Tools-menu" onClick={() => setTool("image")}>이미지</div>
+          <div className="Tools-menu">
+            색
+            <input type="color" onChange={(e) => setColor(e.target.value)} />
+            </div>
+          <div className="Tools-menu">크기</div>
           <div className="Tools-menu">저장</div>
         </div>
 
