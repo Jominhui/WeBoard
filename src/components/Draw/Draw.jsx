@@ -55,8 +55,8 @@ const Draw = ({}) => {
     const ey = endPath[1];
     
     ctx.rect(sx, sy, ex-sx, ey-sy);
-    ctx.fillStyle = "black";
-    ctx.fill();
+    ctx.strokeStyle = "black";
+    ctx.stroke();
   }, [startPath, endPath])
 
   //triangle
@@ -75,15 +75,34 @@ const Draw = ({}) => {
     const sy = startPath[1];
     const ex = endPath[0];
     const ey = endPath[1];
-
-    console.log(sx, sy, ex-sx, ey-sy)
     
     ctx.moveTo((ex + sx)/2, sy);
     ctx.lineTo(sx, ey);
     ctx.lineTo(ex, ey);
     ctx.lineTo((ex + sx)/2, sy);
-    ctx.fillStyle = "black";
-    ctx.fill();
+    ctx.strokeStyle = "black";
+    ctx.stroke();
+  }, [startPath, endPath])
+
+  //circle
+  const circleDown = useCallback((e, ctx) => {
+    ctx.beginPath();
+    setStartPath([e.offsetX, e.offsetY]);
+    setEndPath([e.offsetX, e.offsetY]);
+  }, [])
+
+  const circleMove = useCallback((e) => {
+    setEndPath([e.offsetX, e.offsetY]);
+  }, [])
+
+  const drawCircle = useCallback((e, ctx) => {
+    const sx = startPath[0];
+    const sy = startPath[1];
+    const ex = endPath[0];
+
+    ctx.arc(sx, sy, Math.abs(ex-sx), 0, 2 * Math.PI);
+    ctx.strokeStyle = "black";
+    ctx.stroke();
   }, [startPath, endPath])
 
   const down = useCallback((e) =>{
@@ -102,6 +121,9 @@ const Draw = ({}) => {
         break;
       case "triangle":
         triangleDown(e, ctx);
+        break;
+      case "circle":
+        circleDown(e, ctx);
         break;
     }
   }, [tool, strokeDown, squareDown])
@@ -124,6 +146,9 @@ const Draw = ({}) => {
       case "triangle":
         triangleMove(e, ctx);
         break;
+      case "circle":
+        circleMove(e, ctx);
+        break;
     }
   }, [tool, isDrawing, strokeMove, squareMove])
 
@@ -141,6 +166,9 @@ const Draw = ({}) => {
         break;
       case "triangle":
         drawTriangle(e, ctx);
+        break;
+      case "circle":
+        drawCircle(e, ctx);
         break;
     }
     setisDrawing(false);
