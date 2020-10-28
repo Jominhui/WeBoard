@@ -126,7 +126,7 @@ const Draw = ({}) => {
         circleDown(e, ctx);
         break;
     }
-  }, [tool, strokeDown, squareDown])
+  }, [tool, strokeDown, squareDown, triangleDown, circleDown])
 
   const move = useCallback((e) =>{
     if(!isDrawing) return;
@@ -150,7 +150,7 @@ const Draw = ({}) => {
         circleMove(e, ctx);
         break;
     }
-  }, [tool, isDrawing, strokeMove, squareMove])
+  }, [tool, isDrawing, strokeMove, squareMove, drawCircle, circleMove])
 
 
   const draw = useCallback((e) => {
@@ -172,7 +172,7 @@ const Draw = ({}) => {
         break;
     }
     setisDrawing(false);
-  }, [tool, drawSquare]);
+  }, [tool, drawSquare, drawTriangle, drawCircle]);
   
   useEffect(() => {
     const canvas = document.getElementsByClassName("Canvas-Drawing");
